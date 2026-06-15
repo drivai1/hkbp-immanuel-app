@@ -16,13 +16,10 @@ export default function Home() {
   const [authNama, setAuthNama] = useState('');
   const [listPendaftar, setListPendaftar] = useState<any[]>([]); 
 
-  // STATE SLIDE SHOW IMAGES
-  const [listSlides, setListSlides] = useState<string[]>([
-    // Gambar default bawaan sebagai contoh awal jika belum ada yang diupload
-    "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1545242187-f9c274931f9a?auto=format&fit=crop&w=1200&q=80"
-  ]);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  // STATE GAMBAR UTAMA GEREJA (STATIS)
+  const [gambarUtama, setGambarUtama] = useState<string>(
+    "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1200&q=80"
+  );
 
   // 1. STATE DATA KEGIATAN
   const [listKegiatan, setListKegiatan] = useState([
@@ -99,61 +96,34 @@ export default function Home() {
     const dibacaLokal = localStorage.getItem('pengumuman_dibaca');
     if (dibacaLokal) setSudahDibaca(JSON.parse(dibacaLokal));
 
-    // Ambil Data Slideshow Foto dari LocalStorage
-    const slidesLokal = localStorage.getItem('hkbp_slideshow_photos');
-    if (slidesLokal) setListSlides(JSON.parse(slidesLokal));
+    // Ambil Foto Profil Utama Gereja jika pernah diganti admin
+    const fotoLokal = localStorage.getItem('hkbp_gambar_utama');
+    if (fotoLokal) setGambarUtama(fotoLokal);
 
     ambilDatabaseJemaat();
     refreshSidebar();
   }, []);
 
-  // LOGIKA TIMER GESER OTOMATIS SLIDESHOW
-  useEffect(() => {
-    if (menuAktif === 'Home' && listSlides.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % listSlides.length);
-      }, 4000); // Otomatis geser setiap 4 detik
-      return () => clearInterval(interval);
-    }
-  }, [menuAktif, listSlides]);
-
-  // FUNGSI UPLOAD FOTO BARU OLEH ADMIN (MENGUBAH KE BASE64)
-  const handleUploadFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // FUNGSI GANTI FOTO UTAMA GEREJA OLEH ADMIN
+  const handleGantiGambarUtama = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Validasi ukuran agar file tidak terlalu raksasa (maksimal 1.5MB demi batas penyimpanan browser)
       if (file.size > 1500000) {
-        alert("Ukuran gambar terlalu besar! Harap kompres foto di bawah 1.5 MB sebelum diunggah.");
+        alert("Ukuran foto terlalu besar! Harap gunakan foto di bawah 1.5 MB.");
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        const updatedSlides = [...listSlides, base64String];
-        setListSlides(updatedSlides);
-        localStorage.setItem('hkbp_slideshow_photos', JSON.stringify(updatedSlides));
-        setCurrentSlideIndex(updatedSlides.length - 1); // Langsung arahkan ke foto teranyar
-        alert("Foto Kegiatan Baru Berhasil Diunggah ke Slide Show!");
+        setGambarUtama(base64String);
+        localStorage.setItem('hkbp_gambar_utama', base64String);
+        alert("Foto utama profil Gereja HKBP Immanuel berhasil diperbarui!");
       };
       reader.readAsDataURL(file);
     }
   };
-
-  // FUNGSI HAPUS FOTO SLIDE JIKA SALAH POSTING
-  const handleHapusFotoSlide = (indexHapus: number) => {
-    if (confirm("Apakah Anda yakin ingin menghapus foto dokumentasi ini dari slide show utama jemaat?")) {
-      const updatedSlides = listSlides.filter((_, idx) => idx !== indexHapus);
-      setListSlides(updatedSlides);
-      localStorage.setItem('hkbp_slideshow_photos', JSON.stringify(updatedSlides));
-      setCurrentSlideIndex(0);
-      alert("Foto berhasil dihapus.");
-    }
-  };
-
-  const nextSlide = () => setCurrentSlideIndex((prev) => (prev + 1) % listSlides.length);
-  const prevSlide = () => setCurrentSlideIndex((prev) => (prev - 1 + listSlides.length) % listSlides.length);
 
   const handleRegistrasi = (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,7 +206,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="cursor-pointer" onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); setKegiatanTerpilih(null); }}>
             <h1 className="text-2xl font-bold tracking-wide">HKBP Immanuel Metro Permata</h1>
-            <p className="text-xs text-blue-100">Horas! Selamat Datang di Sistem Informasi Jemaat</p>
+            <p className="text-xs text-blue-100">Sistem Informasi & Pelayanan Digital Jemaat Resmi</p>
           </div>
           <div className="flex items-center space-x-6">
             <span className="text-sm font-medium bg-blue-700 px-3 py-1 rounded-full text-xs">
@@ -251,7 +221,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* MODAL POP-UP LOG-IN/REGIS */}
+      {/* MODAL AUTH */}
       {tampilkanAuth && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full relative">
@@ -260,7 +230,7 @@ export default function Home() {
               {isRegistrasi && <input type="text" required placeholder="Nama Lengkap" className="w-full p-2.5 border rounded-xl text-sm" value={authNama} onChange={(e) => setAuthNama(e.target.value)} />}
               <input type="email" required placeholder="Email Address" className="w-full p-2.5 border rounded-xl text-sm" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} />
               <input type="password" required placeholder="Password" className="w-full p-2.5 border rounded-xl text-sm" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} />
-              <button type="submit" className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold">{isRegistrasi ? 'Daftar & Ajukan Approval' : 'Masuk'}</button>
+              <button type="submit" className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold">{isRegistrasi ? 'Daftar Akun' : 'Masuk'}</button>
             </form>
             <button onClick={() => setIsRegistrasi(!isRegistrasi)} className="text-xs text-blue-600 mt-4 block text-center w-full">{isRegistrasi ? 'Sudah punya akun? Masuk' : 'Belum punya akun? Daftar'}</button>
           </div>
@@ -281,70 +251,38 @@ export default function Home() {
                 <h2 className="text-2xl font-extrabold mt-3">Horas, {namaUser}!</h2>
               </div>
 
-              {/* ==================== MODUL SLIDE SHOW CAROUSEL INTERAKTIF ==================== */}
-              <div className="w-full relative bg-gray-900 rounded-2xl h-72 overflow-hidden shadow-md border border-gray-200 group">
-                {listSlides.length > 0 ? (
-                  <>
-                    {/* Render Gambar Slide Saat Ini */}
-                    <img 
-                      src={listSlides[currentSlideIndex]} 
-                      alt={`Dokumentasi HKBP ${currentSlideIndex + 1}`}
-                      className="w-full h-full object-cover select-none transition-all duration-700 ease-in-out" 
-                    />
-
-                    {/* Overlay Hitam Transparan Lembut di Bagian Bawah Gambar */}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-4 flex justify-between items-end">
-                      <span className="text-xs text-white/80 font-medium bg-black/40 px-3 py-1 rounded-full">
-                        📷 Foto Dokumentasi Kegiatan {currentSlideIndex + 1} / {listSlides.length}
-                      </span>
-                      
-                      {/* Tombol Hapus Eksklusif Hanya untuk Admin yang Muncul Mengambang di Gambar */}
-                      {isAdmin && (
-                        <button 
-                          onClick={() => handleHapusFotoSlide(currentSlideIndex)}
-                          className="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-3 py-1 rounded-lg transition shadow-md"
-                        >
-                          🗑️ Hapus Foto Ini
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Tombol Panah Manual Navigasi Kiri & Kanan */}
-                    <button onClick={prevSlide} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition flex items-center justify-center font-bold text-lg select-none">‹</button>
-                    <button onClick={nextSlide} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition flex items-center justify-center font-bold text-lg select-none">›</button>
-
-                    {/* Indikator Titik (Dots) Kecil di Bawah */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-1.5 z-20">
-                      {listSlides.map((_, idx) => (
-                        <div 
-                          key={idx} 
-                          onClick={() => setCurrentSlideIndex(idx)}
-                          className={`h-1.5 rounded-full transition-all cursor-pointer ${idx === currentSlideIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'}`}
-                        />
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 text-sm">
-                    <p>Belum ada foto kegiatan gereja yang diunggah.</p>
-                  </div>
-                )}
+              {/* ==================== REPLACEMENT: GAMBAR HERO PROFILE HKBP STATIS & AGGUNG ==================== */}
+              <div className="w-full relative bg-gray-900 rounded-2xl h-64 overflow-hidden shadow-sm border border-gray-200">
+                <img 
+                  src={gambarUtama} 
+                  alt="Profil Altar HKBP Immanuel Metro Permata" 
+                  className="w-full h-full object-cover select-none opacity-80"
+                />
+                {/* Overlay Teks Anggun yang Menggambarkan HKBP */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
+                  <h3 className="text-white font-extrabold text-xl tracking-wide drop-shadow-md">
+                    Gereja HKBP Immanuel Metro Permata
+                  </h3>
+                  <p className="text-gray-200 text-xs mt-1 max-w-md font-light leading-relaxed drop-shadow">
+                    "Satu Tuhan, Satu Iman, Satu Baptisan. Melayani jemaat dengan penuh kasih, transparansi, dan sukacita sorgawi."
+                  </p>
+                </div>
               </div>
 
-              {/* SISI ADMIN: PANEL DEDIKASI UNTUK UPLOAD FOTO KE SLIDESHOW */}
+              {/* SISI ADMIN: PANEL TOMBOL UNTUK MENGGANTI FOTO UTAMA GEREJA */}
               {isAdmin && (
-                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 animate-fade-in">
+                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 animate-fade-in">
                   <div>
-                    <h4 className="text-sm font-bold text-amber-900">Media Admin: Tambah Koleksi Slide Show</h4>
-                    <p className="text-[11px] text-amber-700 mt-0.5">Unggah foto dokumentasi pesta, sermon, atau koor baru (Maks 1.5MB).</p>
+                    <h4 className="text-xs font-bold text-amber-900">Media Admin: Ganti Foto Profil Utama</h4>
+                    <p className="text-[10px] text-amber-700 mt-0.5">Unggah foto gedung atau altar altar HKBP Immanuel yang asli untuk mengganti gambar di atas (Maks 1.5MB).</p>
                   </div>
-                  <label className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg cursor-pointer transition shadow-sm">
-                    📁 Pilih & Upload File Foto
+                  <label className="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg cursor-pointer transition shadow-sm">
+                    📷 Ganti Foto Utama
                     <input 
                       type="file" 
                       accept="image/*" 
                       className="hidden" 
-                      onChange={handleUploadFoto} 
+                      onChange={handleGantiGambarUtama} 
                     />
                   </label>
                 </div>
@@ -362,7 +300,7 @@ export default function Home() {
                   ) : (
                     <div className="space-y-3">
                       {listPendaftar.filter((u: any) => u.status === 'PENDING').map((jemaat: any) => (
-                        <div key={jemaat.id} className="bg-white p-4 rounded-xl border border-red-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div key={jemaat.id} className="bg-white p-4 rounded-xl border border-red-100 flex flex-col sm:flex-row justify-between items-center gap-3">
                           <div>
                             <p className="text-sm font-bold text-gray-800">{jemaat.nama}</p>
                             <p className="text-xs text-gray-400 mt-0.5">📧 {jemaat.email}</p>
@@ -444,7 +382,7 @@ export default function Home() {
               <button onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); }} className="text-sm text-green-600 font-semibold mb-4 block">← Kembali ke Beranda</button>
               {!wartaTerpilih ? (
                 <>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">📖 Berita & Warta Jemaat Resmi</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">📖 Berita & Warta Jemaat Resmi</h2>
                   {isAdmin && (
                     <form onSubmit={handleTambahWarta} className="mb-8 p-6 bg-green-50 rounded-xl space-y-4 border border-green-100">
                       <input type="text" required placeholder="Warta Jemaat - Minggu 21 Juni 2026" className="w-full p-2 border rounded-lg text-sm bg-white" value={inputWartaJudul} onChange={(e) => setInputWartaJudul(e.target.value)} />
