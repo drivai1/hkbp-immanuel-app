@@ -16,10 +16,14 @@ export default function Home() {
   const [authNama, setAuthNama] = useState('');
   const [listPendaftar, setListPendaftar] = useState<any[]>([]); 
 
-  // STATE GAMBAR UTAMA GEREJA (STATIS)
-  const [gambarUtama, setGambarUtama] = useState<string>(
-    "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1200&q=80"
-  );
+  // STATE GALERI FOTO HKBP (Statis Berwibawa dengan Pilihan Thumbnail)
+  const [listGaleri, setListGaleri] = useState<string[]>([
+    "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1200&q=80", // Altar Klasik Katedral
+    "https://images.unsplash.com/photo-1545242187-f9c274931f9a?auto=format&fit=crop&w=1200&q=80", // Altar Lilin Khusyuk
+    "https://images.unsplash.com/photo-1515516969-d4008cc6241a?auto=format&fit=crop&w=1200&q=80", // Alkitab & Salib Kebaktian
+    "https://images.unsplash.com/photo-1478147427282-58a87a120781?auto=format&fit=crop&w=1200&q=80"  // Kaca Patri Salib Gereja Tradisional
+  ]);
+  const [gambarUtama, setGambarUtama] = useState<string>(listGaleri[0]);
 
   // 1. STATE DATA KEGIATAN
   const [listKegiatan, setListKegiatan] = useState([
@@ -96,30 +100,34 @@ export default function Home() {
     const dibacaLokal = localStorage.getItem('pengumuman_dibaca');
     if (dibacaLokal) setSudahDibaca(JSON.parse(dibacaLokal));
 
-    // Ambil Foto Profil Utama Gereja jika pernah diganti admin
-    const fotoLokal = localStorage.getItem('hkbp_gambar_utama');
-    if (fotoLokal) setGambarUtama(fotoLokal);
+    // Muat daftar galeri kustom jika pernah diupload admin
+    const galeriLokal = localStorage.getItem('hkbp_koleksi_galeri');
+    if (galeriLokal) {
+      const parsed = JSON.parse(galeriLokal);
+      setListGaleri(parsed);
+      setGambarUtama(parsed[0]);
+    }
 
     ambilDatabaseJemaat();
     refreshSidebar();
   }, []);
 
-  // FUNGSI GANTI FOTO UTAMA GEREJA OLEH ADMIN
-  const handleGantiGambarUtama = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // FUNGSI ADMIN MENAMBAH FOTO SEJENIS KE DALAM COLECTION
+  const handleUploadKeGaleri = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      
       if (file.size > 1500000) {
-        alert("Ukuran foto terlalu besar! Harap gunakan foto di bawah 1.5 MB.");
+        alert("Ukuran file maksimal 1.5 MB agar penyimpanan browser optimal.");
         return;
       }
-
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        setGambarUtama(base64String);
-        localStorage.setItem('hkbp_gambar_utama', base64String);
-        alert("Foto utama profil Gereja HKBP Immanuel berhasil diperbarui!");
+        const updatedGaleri = [...listGaleri, base64String];
+        setListGaleri(updatedGaleri);
+        localStorage.setItem('hkbp_koleksi_galeri', JSON.stringify(updatedGaleri));
+        setGambarUtama(base64String); // Langsung tampilkan foto baru di kotak besar
+        alert("Foto baru berhasil ditambahkan ke koleksi citra HKBP!");
       };
       reader.readAsDataURL(file);
     }
@@ -143,7 +151,7 @@ export default function Home() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (authEmail === 'admin@hkbp.com' && authPassword === 'admin123') {
-      setIsAdmin(true); setIsLoggedIn(true); setNamaUser('Admin Sekretariat');
+      setIsAdmin(true); setIsLoggedIn(true); setNamaUser('Admin Secretariat');
       localStorage.setItem('hkbp_session_user', 'Admin Sekretariat'); localStorage.setItem('hkbp_session_role', 'admin');
       setTampilkanAuth(false); alert('Selamat Datang Kembali, Admin!'); return;
     }
@@ -201,21 +209,32 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 font-sans relative">
       
-      {/* ==================== NAVBAR ==================== */}
-      <nav className="bg-blue-600 text-white shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      {/* ==================== 🏆 NEW DESIGN HEADER: MEWAH & BERWIBAWA COCOK UNTUK GEREJA RESMI ==================== */}
+      <nav className="relative shadow-xl sticky top-0 z-50 overflow-hidden bg-cover bg-center border-b border-white/10" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=800&q=50')" }}>
+        {/* Layer Hitam Degradasi Pekat (Mencegah Warna Biru Polos) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-blue-950/95 to-slate-950 backdrop-blur-[6px]" />
+        
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
           <div className="cursor-pointer" onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); setKegiatanTerpilih(null); }}>
-            <h1 className="text-2xl font-bold tracking-wide">HKBP Immanuel Metro Permata</h1>
-            <p className="text-xs text-blue-100">Sistem Informasi & Pelayanan Digital Jemaat Resmi</p>
+            <h1 className="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-gray-200 drop-shadow-md">
+              HKBP Immanuel Metro Permata
+            </h1>
+            <p className="text-[11px] text-blue-200/80 uppercase font-bold tracking-widest mt-0.5">
+              Sistem Informasi & Penata Layanan Warga Jemaat Digital
+            </p>
           </div>
-          <div className="flex items-center space-x-6">
-            <span className="text-sm font-medium bg-blue-700 px-3 py-1 rounded-full text-xs">
-              Status: {isLoggedIn ? (isAdmin ? '🔴 Admin' : '🟢 Jemaat') : '⚪ Tamu'}
+          <div className="flex items-center space-x-5">
+            <span className="text-xs font-bold bg-white/10 backdrop-blur-md text-white border border-white/20 px-3 py-1.5 rounded-full">
+              Status: {isLoggedIn ? (isAdmin ? '🔴 Admin Sekretariat' : '🟢 Jemaat Aktif') : '⚪ Tamu Jemaat'}
             </span>
             {isLoggedIn ? (
-              <button onClick={handleLogout} className="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 text-sm">Logout 🚪</button>
+              <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 font-bold px-4 py-2 rounded-xl text-xs text-white transition shadow-md">
+                Logout 🚪
+              </button>
             ) : (
-              <button onClick={() => { setTampilkanAuth(true); setIsRegistrasi(false); }} className="bg-emerald-500 px-4 py-2 rounded-lg hover:bg-emerald-600 text-sm font-bold">Masuk / Daftar 🔑</button>
+              <button onClick={() => { setTampilkanAuth(true); setIsRegistrasi(false); }} className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 font-extrabold px-4 py-2 rounded-xl text-xs text-white transition shadow-md">
+                Masuk / Daftar 🔑
+              </button>
             )}
           </div>
         </div>
@@ -229,222 +248,4 @@ export default function Home() {
             <form onSubmit={isRegistrasi ? handleRegistrasi : handleLogin} className="space-y-4">
               {isRegistrasi && <input type="text" required placeholder="Nama Lengkap" className="w-full p-2.5 border rounded-xl text-sm" value={authNama} onChange={(e) => setAuthNama(e.target.value)} />}
               <input type="email" required placeholder="Email Address" className="w-full p-2.5 border rounded-xl text-sm" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} />
-              <input type="password" required placeholder="Password" className="w-full p-2.5 border rounded-xl text-sm" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} />
-              <button type="submit" className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold">{isRegistrasi ? 'Daftar Akun' : 'Masuk'}</button>
-            </form>
-            <button onClick={() => setIsRegistrasi(!isRegistrasi)} className="text-xs text-blue-600 mt-4 block text-center w-full">{isRegistrasi ? 'Sudah punya akun? Masuk' : 'Belum punya akun? Daftar'}</button>
-          </div>
-        </div>
-      )}
-
-      {/* ==================== KONTEN LAYOUT GRID ==================== */}
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* KOLOM UTAMA (KIRI-TENGAH) */}
-        <div className="lg:col-span-2 space-y-8">
-          
-          {menuAktif === 'Home' && (
-            <>
-              {/* BANNER SELAMAT DATANG */}
-              <div className="bg-gradient-to-r from-blue-700 to-indigo-600 rounded-2xl p-6 text-white shadow-md">
-                <span className="text-xs font-bold uppercase bg-blue-500/40 px-3 py-1 rounded-full tracking-wider">{isLoggedIn ? (isAdmin ? '👑 Ruang Kerja Sekretariat' : '⛪ Laman Warga Jemaat') : '👋 Selamat Datang'}</span>
-                <h2 className="text-2xl font-extrabold mt-3">Horas, {namaUser}!</h2>
-              </div>
-
-              {/* ==================== REPLACEMENT: GAMBAR HERO PROFILE HKBP STATIS & AGGUNG ==================== */}
-              <div className="w-full relative bg-gray-900 rounded-2xl h-64 overflow-hidden shadow-sm border border-gray-200">
-                <img 
-                  src={gambarUtama} 
-                  alt="Profil Altar HKBP Immanuel Metro Permata" 
-                  className="w-full h-full object-cover select-none opacity-80"
-                />
-                {/* Overlay Teks Anggun yang Menggambarkan HKBP */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex flex-col justify-end">
-                  <h3 className="text-white font-extrabold text-xl tracking-wide drop-shadow-md">
-                    Gereja HKBP Immanuel Metro Permata
-                  </h3>
-                  <p className="text-gray-200 text-xs mt-1 max-w-md font-light leading-relaxed drop-shadow">
-                    "Satu Tuhan, Satu Iman, Satu Baptisan. Melayani jemaat dengan penuh kasih, transparansi, dan sukacita sorgawi."
-                  </p>
-                </div>
-              </div>
-
-              {/* SISI ADMIN: PANEL TOMBOL UNTUK MENGGANTI FOTO UTAMA GEREJA */}
-              {isAdmin && (
-                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 animate-fade-in">
-                  <div>
-                    <h4 className="text-xs font-bold text-amber-900">Media Admin: Ganti Foto Profil Utama</h4>
-                    <p className="text-[10px] text-amber-700 mt-0.5">Unggah foto gedung atau altar altar HKBP Immanuel yang asli untuk mengganti gambar di atas (Maks 1.5MB).</p>
-                  </div>
-                  <label className="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg cursor-pointer transition shadow-sm">
-                    📷 Ganti Foto Utama
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleGantiGambarUtama} 
-                    />
-                  </label>
-                </div>
-              )}
-
-              {/* PANEL APPROVAL ADMIN */}
-              {isAdmin && (
-                <div className="bg-red-50 p-6 rounded-2xl border border-red-200 shadow-sm">
-                  <h2 className="text-lg font-bold text-red-900 mb-4 flex items-center">
-                    <span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-ping"></span>
-                    🔒 Pangkalan Data Approval Akun Jemaat Baru
-                  </h2>
-                  {listPendaftar.filter((u: any) => u.status === 'PENDING').length === 0 ? (
-                    <p className="text-xs text-gray-500 italic">Tidak ada permohonan pendaftaran jemaat baru saat ini.</p>
-                  ) : (
-                    <div className="space-y-3">
-                      {listPendaftar.filter((u: any) => u.status === 'PENDING').map((jemaat: any) => (
-                        <div key={jemaat.id} className="bg-white p-4 rounded-xl border border-red-100 flex flex-col sm:flex-row justify-between items-center gap-3">
-                          <div>
-                            <p className="text-sm font-bold text-gray-800">{jemaat.nama}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">📧 {jemaat.email}</p>
-                          </div>
-                          <button onClick={() => handleApproveJemaat(jemaat.id)} className="bg-green-600 text-white text-xs font-black px-4 py-2 rounded-lg">✓ Setujui Jemaat</button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* LAYANAN GEREJA */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                  <span className="w-1.5 h-6 bg-blue-600 rounded-full mr-2"></span> Layanan Gereja
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                  <div onClick={() => { setMenuAktif('Kegiatan'); setKegiatanTerpilih(null); }} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-blue-50 transition">
-                    <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">📅</div>
-                    <span className="text-sm text-gray-700 mt-3 font-semibold">Kegiatan</span>
-                  </div>
-                  <div onClick={() => { setMenuAktif('Warta'); setWartaTerpilih(null); }} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-green-50 transition">
-                    <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-2xl">📖</div>
-                    <span className="text-sm text-gray-700 mt-3 font-semibold">Warta</span>
-                  </div>
-                  <div onClick={() => setMenuAktif('Formulir')} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-purple-50 transition">
-                    <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">📝</div>
-                    <span className="text-sm text-gray-700 mt-3 font-semibold">Formulir</span>
-                  </div>
-                  <div onClick={() => alert('Fitur GSG siap digunakan')} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-amber-50 transition">
-                    <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center text-2xl">🏠</div>
-                    <span className="text-sm text-gray-700 mt-3 font-semibold">Gedung GSG</span>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* SUB-MENU: KEGIATAN */}
-          {menuAktif === 'Kegiatan' && (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <button onClick={() => { setMenuAktif('Home'); setKegiatanTerpilih(null); }} className="text-sm text-blue-600 font-semibold mb-4 block">← Kembali ke Beranda</button>
-              {!kegiatanTerpilih ? (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">📅 Kalender & Jadwal Kegiatan</h2>
-                  {isAdmin && (
-                    <form onSubmit={handleTambahKegiatan} className="mb-8 p-5 bg-blue-50 rounded-xl space-y-4 border border-blue-100">
-                      <input type="text" required placeholder="Nama Kegiatan" className="w-full p-2 border rounded-lg text-sm bg-white" value={inputKegNama} onChange={(e) => setInputKegNama(e.target.value)} />
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input type="text" required placeholder="Tanggal" className="p-2 border rounded-lg text-sm bg-white" value={inputKegTanggal} onChange={(e) => setInputKegTanggal(e.target.value)} />
-                        <input type="text" required placeholder="Jam" className="p-2 border rounded-lg text-sm bg-white" value={inputKegJam} onChange={(e) => setInputKegJam(e.target.value)} />
-                      </div>
-                      <button type="submit" className="bg-blue-600 text-white px-5 py-2 rounded-lg text-xs font-bold">Terbitkan Jadwal</button>
-                    </form>
-                  )}
-                  <div className="space-y-4">
-                    {listKegiatan.map((keg) => (
-                      <div key={keg.id} onClick={() => { setKegiatanTerpilih(keg); if(!sudahDibaca.includes(keg.id)){ setSudahDibaca([...sudahDibaca, keg.id]); } }} className="p-4 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100 hover:border-blue-400 cursor-pointer transition">
-                        <div><h4 className="font-bold text-gray-800">{keg.nama}</h4><p className="text-xs text-gray-500 mt-1">🗓️ {keg.tanggal} | ⏰ {keg.jam}</p></div>
-                        <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Buka Details ➔</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="bg-white p-2 rounded-xl space-y-6">
-                  <button onClick={() => setKegiatanTerpilih(null)} className="text-sm text-blue-600 font-semibold mb-2 block">← Kembali ke Jadwal</button>
-                  <h3 className="text-2xl font-bold text-gray-900 border-b pb-3">{kegiatanTerpilih.nama}</h3>
-                  <div className="bg-blue-50 p-5 rounded-xl border border-blue-100"><p className="text-gray-700 text-sm whitespace-pre-line">{kegiatanTerpilih.deskripsi}</p></div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* SUB-MENU: WARTA */}
-          {menuAktif === 'Warta' && (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <button onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); }} className="text-sm text-green-600 font-semibold mb-4 block">← Kembali ke Beranda</button>
-              {!wartaTerpilih ? (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">📖 Berita & Warta Jemaat Resmi</h2>
-                  {isAdmin && (
-                    <form onSubmit={handleTambahWarta} className="mb-8 p-6 bg-green-50 rounded-xl space-y-4 border border-green-100">
-                      <input type="text" required placeholder="Warta Jemaat - Minggu 21 Juni 2026" className="w-full p-2 border rounded-lg text-sm bg-white" value={inputWartaJudul} onChange={(e) => setInputWartaJudul(e.target.value)} />
-                      <textarea rows={3} placeholder="Tingting Na Marragam..." className="w-full p-2 border rounded-lg text-sm bg-white" value={inputTingting} onChange={(e) => setInputTingting(e.target.value)} />
-                      <button type="submit" className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold">Terbitkan Warta</button>
-                    </form>
-                  )}
-                  <div className="space-y-4">
-                    {listWarta.map((warta) => (
-                      <div key={warta.id} onClick={() => { setWartaTerpilih(warta); if(!sudahDibaca.includes(warta.id)){ setSudahDibaca([...sudahDibaca, warta.id]); } }} className="p-4 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100 hover:border-green-400 cursor-pointer transition">
-                        <p className="font-semibold text-gray-800">{warta.judul}</p><span className="text-xl text-gray-400">➔</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="bg-white p-2 rounded-xl space-y-6">
-                  <button onClick={() => setWartaTerpilih(null)} className="text-sm text-green-600 font-semibold mb-2 block">← Kembali ke Daftar</button>
-                  <h3 className="text-2xl font-bold text-gray-900 border-b pb-3">{wartaTerpilih.judul}</h3>
-                  <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm"><p className="text-gray-700 text-sm whitespace-pre-line">{wartaTerpilih.tingtingMarragam}</p></div>
-                </div>
-              )}
-            </div>
-          )}
-
-        </div>
-
-        {/* ==================== SIDEBAR KANAN ==================== */}
-        <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 sticky top-24">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center">
-                <span className="w-1.5 h-6 bg-amber-500 rounded-full mr-2"></span> Pengumuman Terbaru
-              </h2>
-              <span className="text-xl animate-bounce">🔔</span>
-            </div>
-            
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-              {sidebarPengumuman.map((item: any) => {
-                const belumKlik = !sudahDibaca.includes(item.id);
-                return (
-                  <div 
-                    key={`${item.tipe}-${item.id}`} 
-                    onClick={() => handleKlikPengumuman(item)}
-                    className={`p-4 rounded-xl border cursor-pointer transition duration-300 relative overflow-hidden transform hover:-translate-y-0.5 ${
-                      belumKlik ? 'bg-amber-50 border-amber-400 shadow-md ring-2 ring-amber-300/40' : 'bg-gray-50 border-gray-100 opacity-80' 
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider ${item.tipe === 'WARTA' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{item.tipe}</span>
-                      {belumKlik ? <span className="text-[9px] bg-red-500 text-white font-black px-1.5 py-0.5 rounded animate-pulse">🔴 BARU</span> : <span className="text-[9px] text-gray-400 font-medium">✓ Dibaca</span>}
-                    </div>
-                    <p className={`text-sm mt-2 leading-snug ${belumKlik ? 'font-black text-amber-950' : 'font-medium text-gray-600'}`}>{item.teks}</p>
-                    <span className="text-xs text-gray-400 block mt-2">⏱️ {item.info}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </main>
-  );
-}
+              <input type="password" required placeholder="Password" className="w-full p-2.5 border
