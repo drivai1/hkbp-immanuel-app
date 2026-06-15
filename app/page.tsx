@@ -43,7 +43,7 @@ export default function Home() {
     },
   ]);
 
-  // ==================== 💰 STATE BARU: DATA IURAN JEMAAT ====================
+  // ==================== STATE DATA IURAN JEMAAT ====================
   const [iuranWajib, setIuranWajib] = useState('Rp 50.000 / Bulan');
   const [toktokGotilon, setToktokGotilon] = useState('Rp 250.000 / KK (Tahun 2026)');
   const [toktokPembangunan, setToktokPembangunan] = useState('Rp 300.000 / KK');
@@ -107,7 +107,6 @@ export default function Home() {
     if(localStorage.getItem('warta_hkbp')) setListWarta(JSON.parse(localStorage.getItem('warta_hkbp')!));
     if(localStorage.getItem('pengumuman_dibaca')) setSudahDibaca(JSON.parse(localStorage.getItem('pengumuman_dibaca')!));
 
-    // Muat data iuran jemaat lokal
     if(localStorage.getItem('iuran_wajib')) setIuranWajib(localStorage.getItem('iuran_wajib')!);
     if(localStorage.getItem('iuran_gotilon')) setToktokGotilon(localStorage.getItem('iuran_gotilon')!);
     if(localStorage.getItem('iuran_pembangunan')) setToktokPembangunan(localStorage.getItem('iuran_pembangunan')!);
@@ -126,7 +125,6 @@ export default function Home() {
     refreshSidebar();
   }, []);
 
-  // FUNGSI UPDATE DATA IURAN OLEH ADMIN
   const handleUpdateIuran = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputWajib) { setIuranWajib(inputWajib); localStorage.setItem('iuran_wajib', inputWajib); }
@@ -135,7 +133,7 @@ export default function Home() {
     if (inputDonasi) { setInfoDonasi(inputDonasi); localStorage.setItem('iuran_donasi', inputDonasi); }
     
     setInputWajib(''); setInputGotilon(''); setInputPembangunan(''); setInputDonasi('');
-    alert('Tarif Ketetapan Iuran Jemaat Berhasil Diperbarui!');
+    alert('Ketetapan Iuran Jemaat Berhasil Diperbarui!');
   };
 
   const handleUploadKeGaleri = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,7 +229,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 font-sans relative">
       
-      {/* ==================== NAVBAR HEADER GLASSMORPHISM ==================== */}
+      {/* ==================== NAVBAR HEADER STABLE DESIGN ==================== */}
       <nav className="relative shadow-xl sticky top-0 z-50 bg-slate-950 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
           <div className="cursor-pointer" onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); setKegiatanTerpilih(null); }}>
@@ -277,7 +275,7 @@ export default function Home() {
                 <h2 className="text-2xl font-extrabold mt-3">Selamat Datang, {namaUser}!</h2>
               </div>
 
-              {/* PHOTO PREVIEW BOX */}
+              {/* PHOTO GALLERY VIEW BOX */}
               <div className="space-y-4">
                 <div className="w-full relative bg-gray-900 rounded-2xl h-64 overflow-hidden border border-gray-200 shadow-sm">
                   {gambarUtama && <img src={gambarUtama} alt="Citra Altar HKBP" className="w-full h-full object-cover opacity-85" />}
@@ -318,7 +316,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ==================== LAYANAN GEREJA (5 MENU TERMASUK IURAN JEMAAT) ==================== */}
+              {/* LAYANAN GEREJA (DENGAN TOTAL MENU MENJADI 5) */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                   <span className="w-1.5 h-6 bg-blue-600 rounded-full mr-2"></span> Layanan Jemaat & Gereja
@@ -333,7 +331,7 @@ export default function Home() {
                     <span className="text-xs text-gray-700 mt-2.5 font-bold">Warta</span>
                   </div>
 
-                  {/* 💰 MENU BARU: IURAN JEMAAT */}
+                  {/* TOMBOL EMAS: IURAN JEMAAT */}
                   <div onClick={() => setMenuAktif('Iuran')} className="flex flex-col items-center p-3 bg-amber-50 rounded-xl cursor-pointer hover:bg-amber-100/70 border border-amber-200 transition">
                     <div className="w-12 h-12 bg-amber-200 text-amber-800 rounded-xl flex items-center justify-center text-xl">💰</div>
                     <span className="text-xs text-amber-900 mt-2.5 font-black">Iuran Jemaat</span>
@@ -352,7 +350,7 @@ export default function Home() {
             </>
           )}
 
-          {/* ==================== SUB-MENU BARU: HALAMAN TARIF IURAN JEMAAT HKBP ==================== */}
+          {/* SUB-MENU: HALAMAN TARIF IURAN JEMAAT HKBP */}
           {menuAktif === 'Iuran' && (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
               <button onClick={() => setMenuAktif('Home')} className="text-sm text-amber-700 font-bold mb-2 block">← Kembali ke Beranda</button>
@@ -362,7 +360,7 @@ export default function Home() {
                 <p className="text-xs text-gray-400 mt-1">Berikut adalah rincian kewajiban iuran pusat/daerah untuk tertib administrasi di HKBP Immanuel Metro Permata.</p>
               </div>
 
-              {/* PANEL ADMIN: UNTUK MERUBAH NOMINAL TARIF IURAN */}
+              {/* FORM EDITOR ADMIN */}
               {isAdmin && (
                 <form onSubmit={handleUpdateIuran} className="p-5 bg-amber-50/70 border border-amber-200 rounded-xl space-y-4">
                   <h3 className="text-xs font-black text-amber-950 uppercase border-b pb-1.5">✍️ Editor Keuangan Sekretariat (Admin Only)</h3>
@@ -392,7 +390,7 @@ export default function Home() {
                 </form>
               )}
 
-              {/* GRID TAMPILAN KARTU IURAN UNTUK JEMAAT */}
+              {/* GRID KARTU TAMPILAN JEMAAT */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Kewajiban Rutin</span>
@@ -402,7 +400,7 @@ export default function Home() {
 
                 <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Kewajiban Tahunan</span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-2">Toktok Ripe Gotilon (Pesta Puncak)</h4>
+                  <h4 className="font-bold text-gray-800 text-sm mt-2">Toktok Ripe Gotilon</h4>
                   <p className="text-xl font-black text-gray-900 mt-2">{toktokGotilon}</p>
                 </div>
 
@@ -414,7 +412,7 @@ export default function Home() {
 
                 <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Sukarela / Persembahan</span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-2">Donasi & Sumpahan Tangan Lain</h4>
+                  <h4 className="font-bold text-gray-800 text-sm mt-2">Donasi & Sumbangan Tangan Lain</h4>
                   <p className="text-xs font-medium text-gray-600 mt-2 leading-relaxed whitespace-pre-line">{infoDonasi}</p>
                 </div>
               </div>
@@ -450,7 +448,7 @@ export default function Home() {
               ) : (
                 <div className="bg-white p-2 rounded-xl space-y-6">
                   <button onClick={() => setKegiatanTerpilih(null)} className="text-sm text-blue-600 font-semibold mb-2 block">← Kembali ke Jadwal</button>
-                  <h3 className="text-2xl font-bold text-gray-900 border-b pb-3">{kegiatanTerpilled.nama}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 border-b pb-3">{kegiatanTerpilih.nama}</h3>
                   <div className="bg-blue-50 p-5 rounded-xl border border-blue-100"><p className="text-gray-700 text-sm whitespace-pre-line">{kegiatanTerpilih.deskripsi}</p></div>
                 </div>
               )}
