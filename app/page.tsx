@@ -43,7 +43,7 @@ export default function Home() {
     },
   ]);
 
-  // ==================== STATE DATA IURAN JEMAAT ====================
+  // STATE DATA IURAN JEMAAT
   const [iuranWajib, setIuranWajib] = useState('Rp 50.000 / Bulan');
   const [toktokGotilon, setToktokGotilon] = useState('Rp 250.000 / KK (Tahun 2026)');
   const [toktokPembangunan, setToktokPembangunan] = useState('Rp 300.000 / KK');
@@ -229,18 +229,22 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 font-sans relative">
       
-      {/* ==================== NAVBAR HEADER STABLE DESIGN ==================== */}
+      {/* ==================== NAVBAR HEADER (RESPONSIF MOBILE OK) ==================== */}
       <nav className="relative shadow-xl sticky top-0 z-50 bg-slate-950 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
-          <div className="cursor-pointer" onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); setKegiatanTerpilih(null); }}>
-            <h1 className="text-xl font-black tracking-wider bg-gradient-to-r from-white via-blue-100 to-gray-200 text-transparent bg-clip-text">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10">
+          <div className="text-center sm:text-left cursor-pointer" onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); setKegiatanTerpilih(null); }}>
+            <h1 className="text-lg sm:text-xl font-black tracking-wider bg-gradient-to-r from-white via-blue-100 to-gray-200 text-transparent bg-clip-text">
               HKBP Immanuel Metro Permata
             </h1>
-            <p className="text-[10px] text-blue-300 font-bold tracking-widest mt-0.5 uppercase">Sistem Informasi & Penata Layanan Warga Jemaat Digital</p>
+            <p className="text-[9px] sm:text-[10px] text-blue-300 font-bold tracking-widest mt-0.5 uppercase">Sistem Informasi & Penata Layanan Warga Jemaat Digital</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-[10px] font-bold bg-white/10 text-white border border-white/20 px-3 py-1 rounded-full">Status: {isLoggedIn ? (isAdmin ? '🔴 Admin' : '🟢 Jemaat') : '⚪ Tamu'}</span>
-            {isLoggedIn ? ( <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 font-bold px-3 py-1.5 rounded-lg text-xs text-white transition">Logout 🚪</button> ) : ( <button onClick={() => { setTampilkanAuth(true); setIsRegistrasi(false); }} className="bg-emerald-500 hover:bg-emerald-600 font-extrabold px-3 py-1.5 rounded-lg text-xs text-white transition">Masuk / Daftar 🔑</button> )}
+          <div className="flex items-center space-x-3 w-full sm:w-auto justify-center sm:justify-end">
+            <span className="text-[9px] sm:text-[10px] font-bold bg-white/10 text-white border border-white/20 px-2.5 py-1 rounded-full whitespace-nowrap">Status: {isLoggedIn ? (isAdmin ? '🔴 Admin' : '🟢 Jemaat') : '⚪ Tamu'}</span>
+            {isLoggedIn ? ( 
+              <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 font-bold px-3 py-1 rounded-lg text-xs text-white transition whitespace-nowrap">Logout 🚪</button> 
+            ) : ( 
+              <button onClick={() => { setTampilkanAuth(true); setIsRegistrasi(false); }} className="bg-emerald-500 hover:bg-emerald-600 font-extrabold px-3 py-1 rounded-lg text-xs text-white transition whitespace-nowrap">Masuk / Daftar 🔑</button> 
+            )}
           </div>
         </div>
       </nav>
@@ -261,54 +265,55 @@ export default function Home() {
         </div>
       )}
 
-      {/* ==================== KONTEN LAYOUT GRID ==================== */}
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* ==================== GRID KONTEN LAYOUT (DINAMIS LAPTOP vs MOBILE) ==================== */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* KOLOM UTAMA (KIRI-TENGAH) */}
-        <div className="lg:col-span-2 space-y-8">
+        {/* KOLOM UTAMA */}
+        <div className="lg:col-span-2 space-y-6">
           
           {menuAktif === 'Home' && (
             <>
               {/* BANNER WELCOME */}
-              <div className="bg-gradient-to-r from-blue-700 to-indigo-600 rounded-2xl p-6 text-white shadow-md">
-                <span className="text-xs font-bold uppercase bg-blue-500/40 px-3 py-1 rounded-full tracking-wider">{isLoggedIn ? (isAdmin ? '👑 Administrator' : '⛪ Laman Jemaat') : '👋 Horas'}</span>
-                <h2 className="text-2xl font-extrabold mt-3">Selamat Datang, {namaUser}!</h2>
+              <div className="bg-gradient-to-r from-blue-700 to-indigo-600 rounded-2xl p-5 sm:p-6 text-white shadow-md">
+                <span className="text-[10px] font-bold uppercase bg-blue-500/40 px-2.5 py-0.5 rounded-full tracking-wider">{isLoggedIn ? (isAdmin ? '👑 Administrator' : '⛪ Laman Jemaat') : '👋 Horas'}</span>
+                <h2 className="text-xl sm:text-2xl font-extrabold mt-2">Selamat Datang, {namaUser}!</h2>
               </div>
 
               {/* PHOTO GALLERY VIEW BOX */}
-              <div className="space-y-4">
-                <div className="w-full relative bg-gray-900 rounded-2xl h-64 overflow-hidden border border-gray-200 shadow-sm">
+              <div className="space-y-3">
+                <div className="w-full relative bg-gray-900 rounded-2xl h-48 sm:h-64 overflow-hidden border border-gray-200 shadow-sm">
                   {gambarUtama && <img src={gambarUtama} alt="Citra Altar HKBP" className="w-full h-full object-cover opacity-85" />}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-5 flex flex-col justify-end">
-                    <h3 className="text-white font-extrabold text-lg tracking-wide">Gereja HKBP Immanuel Metro Permata</h3>
-                    <p className="text-gray-300 text-[11px] mt-1 max-w-md font-light leading-relaxed">"Satu Tuhan, Satu Iman, Satu Baptisan. Melayani jemaat dengan penuh ketulusan dan berlandaskan kasih Kristus."</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-4 sm:p-5 flex flex-col justify-end">
+                    <h3 className="text-white font-extrabold text-sm sm:text-lg tracking-wide">Gereja HKBP Immanuel Metro Permata</h3>
+                    <p className="text-gray-300 text-[10px] sm:text-[11px] mt-0.5 max-w-md font-light leading-relaxed">"Satu Tuhan, Satu Iman, Satu Baptisan. Melayani jemaat dengan penuh ketulusan dan berlandaskan kasih Kristus."</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-3">
+                {/* Baris Miniatur Gambar */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
                   {listGaleri.map((foto, index) => (
-                    <div key={index} onClick={() => setGambarUtama(foto)} className={`h-16 rounded-xl overflow-hidden border-2 cursor-pointer transition ${foto === gambarUtama ? 'border-blue-600 scale-95 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'}`}><img src={foto} alt={`Koleksi ${index + 1}`} className="w-full h-full object-cover" /></div>
+                    <div key={index} onClick={() => setGambarUtama(foto)} className={`h-12 sm:h-16 rounded-xl overflow-hidden border-2 cursor-pointer transition ${foto === gambarUtama ? 'border-blue-600 scale-95 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'}`}><img src={foto} alt={`Koleksi ${index + 1}`} className="w-full h-full object-cover" /></div>
                   ))}
                 </div>
               </div>
 
               {/* INPUT ADMIN TAMBAH MEDIA */}
               {isAdmin && (
-                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <div><h4 className="text-xs font-bold text-amber-900">Media Admin: Tambah Koleksi Gambar</h4><p className="text-[10px] text-amber-700">Unggah citra sejenis di bawah 1.5MB.</p></div>
-                  <label className="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold px-4 py-2 rounded-lg cursor-pointer transition">📁 Upload Foto<input type="file" accept="image/*" className="hidden" onChange={handleUploadKeGaleri} /></label>
+                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
+                  <div><h4 className="font-bold text-amber-900">Media Admin: Tambah Koleksi Gambar</h4><p className="text-[10px] text-amber-700">Unggah citra sejenis di bawah 1.5MB.</p></div>
+                  <label className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg cursor-pointer transition">📁 Upload Foto<input type="file" accept="image/*" className="hidden" onChange={handleUploadKeGaleri} /></label>
                 </div>
               )}
 
               {/* PANEL APPROVAL ADMIN */}
               {isAdmin && (
-                <div className="bg-red-50 p-6 rounded-2xl border border-red-200 shadow-sm">
-                  <h2 className="text-lg font-bold text-red-900 mb-4 flex items-center"><span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-ping"></span>🔒 Approval Akun Jemaat</h2>
-                  {listPendaftar.filter((u: any) => u.status === 'PENDING').length === 0 ? ( <p className="text-xs text-gray-500 italic">Tidak ada permohonan aktif.</p> ) : (
-                    <div className="space-y-3">
+                <div className="bg-red-50 p-5 rounded-2xl border border-red-200 shadow-sm text-xs">
+                  <h2 className="text-sm font-bold text-red-900 mb-3 flex items-center"><span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-ping"></span>🔒 Approval Akun Jemaat</h2>
+                  {listPendaftar.filter((u: any) => u.status === 'PENDING').length === 0 ? ( <p className="text-gray-500 italic">Tidak ada permohonan aktif.</p> ) : (
+                    <div className="space-y-2">
                       {listPendaftar.filter((u: any) => u.status === 'PENDING').map((jemaat: any) => (
-                        <div key={jemaat.id} className="bg-white p-4 rounded-xl border border-red-100 flex justify-between items-center">
-                          <div><p className="text-sm font-bold text-gray-800">{jemaat.nama}</p><p className="text-xs text-gray-400">📧 {jemaat.email}</p></div>
-                          <button onClick={() => handleApproveJemaat(jemaat.id)} className="bg-green-600 text-white text-xs font-black px-3 py-1.5 rounded-lg">✓ Setujui</button>
+                        <div key={jemaat.id} className="bg-white p-3 rounded-xl border border-red-100 flex justify-between items-center">
+                          <div><p className="font-bold text-gray-800">{jemaat.nama}</p><p className="text-[10px] text-gray-400">📧 {jemaat.email}</p></div>
+                          <button onClick={() => handleApproveJemaat(jemaat.id)} className="bg-green-600 text-white font-black px-2.5 py-1 rounded-md">✓ Setujui</button>
                         </div>
                       ))}
                     </div>
@@ -316,140 +321,105 @@ export default function Home() {
                 </div>
               )}
 
-              {/* LAYANAN GEREJA (DENGAN TOTAL MENU MENJADI 5) */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                  <span className="w-1.5 h-6 bg-blue-600 rounded-full mr-2"></span> Layanan Jemaat & Gereja
+              {/* ==================== MENU LAYANAN GEREJA (OTOMATIS BERADAPTASI MOBILE vs LAPTOP) ==================== */}
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-base sm:text-xl font-bold text-gray-800 mb-4 flex items-center">
+                  <span className="w-1.5 h-5 bg-blue-600 rounded-full mr-2"></span> Layanan Jemaat & Gereja
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                {/* Di HP otomatis mengelompok grid 2 kolom, di laptop berjejer 5 kolom */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
                   <div onClick={() => { setMenuAktif('Kegiatan'); setKegiatanTerpilih(null); }} className="flex flex-col items-center p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-blue-50 transition">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-xl">📅</div>
-                    <span className="text-xs text-gray-700 mt-2.5 font-bold">Kegiatan</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center text-lg">📅</div>
+                    <span className="text-[11px] sm:text-xs text-gray-700 mt-2 font-bold">Kegiatan</span>
                   </div>
                   <div onClick={() => { setMenuAktif('Warta'); setWartaTerpilih(null); }} className="flex flex-col items-center p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-green-50 transition">
-                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-xl">📖</div>
-                    <span className="text-xs text-gray-700 mt-2.5 font-bold">Warta</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center text-lg">📖</div>
+                    <span className="text-[11px] sm:text-xs text-gray-700 mt-2 font-bold">Warta</span>
                   </div>
 
-                  {/* TOMBOL EMAS: IURAN JEMAAT */}
-                  <div onClick={() => setMenuAktif('Iuran')} className="flex flex-col items-center p-3 bg-amber-50 rounded-xl cursor-pointer hover:bg-amber-100/70 border border-amber-200 transition">
-                    <div className="w-12 h-12 bg-amber-200 text-amber-800 rounded-xl flex items-center justify-center text-xl">💰</div>
-                    <span className="text-xs text-amber-900 mt-2.5 font-black">Iuran Jemaat</span>
+                  {/* TOMBOL IURAN */}
+                  <div onClick={() => setMenuAktif('Iuran')} className="flex flex-col items-center p-3 bg-amber-50 rounded-xl cursor-pointer hover:bg-amber-100 border border-amber-200 transition">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-200 text-amber-800 rounded-xl flex items-center justify-center text-lg">💰</div>
+                    <span className="text-[11px] sm:text-xs text-amber-900 mt-2 font-black">Iuran Jemaat</span>
                   </div>
 
                   <div onClick={() => setMenuAktif('Formulir')} className="flex flex-col items-center p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-purple-50 transition">
-                    <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-xl">📝</div>
-                    <span className="text-xs text-gray-700 mt-2.5 font-bold">Formulir</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl flex items-center justify-center text-lg">📝</div>
+                    <span className="text-[11px] sm:text-xs text-gray-700 mt-2 font-bold">Formulir</span>
                   </div>
-                  <div onClick={() => alert('Gedung GSG siap digunakan')} className="flex flex-col items-center p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-sky-50 transition">
-                    <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center text-xl">🏠</div>
-                    <span className="text-xs text-gray-700 mt-2.5 font-bold">Gedung GSG</span>
+                  <div onClick={() => alert('Gedung GSG siap digunakan')} className="flex flex-col items-center p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-sky-50 transition col-span-2 sm:col-span-1">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 rounded-xl flex items-center justify-center text-lg">🏠</div>
+                    <span className="text-[11px] sm:text-xs text-gray-700 mt-2 font-bold">Gedung GSG</span>
                   </div>
                 </div>
               </div>
             </>
           )}
 
-          {/* SUB-MENU: HALAMAN TARIF IURAN JEMAAT HKBP */}
+          {/* SUB-MENU: IURAN JEMAAT */}
           {menuAktif === 'Iuran' && (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-              <button onClick={() => setMenuAktif('Home')} className="text-sm text-amber-700 font-bold mb-2 block">← Kembali ke Beranda</button>
-              
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-5 text-xs sm:text-sm">
+              <button onClick={() => setMenuAktif('Home')} className="text-xs text-amber-700 font-bold mb-1 block">← Kembali ke Beranda</button>
               <div>
-                <h2 className="text-2xl font-black text-gray-800 flex items-center">🪙 Daftar Ketetapan Iuran Resmi Warga Jemaat</h2>
-                <p className="text-xs text-gray-400 mt-1">Berikut adalah rincian kewajiban iuran pusat/daerah untuk tertib administrasi di HKBP Immanuel Metro Permata.</p>
+                <h2 className="text-xl font-black text-gray-800">🪙 Ketetapan Iuran Resmi Warga Jemaat</h2>
+                <p className="text-[11px] text-gray-400 mt-0.5">Rincian kewajiban iuran untuk tertib administrasi di HKBP Immanuel Metro Permata.</p>
               </div>
 
-              {/* FORM EDITOR ADMIN */}
               {isAdmin && (
-                <form onSubmit={handleUpdateIuran} className="p-5 bg-amber-50/70 border border-amber-200 rounded-xl space-y-4">
-                  <h3 className="text-xs font-black text-amber-950 uppercase border-b pb-1.5">✍️ Editor Keuangan Sekretariat (Admin Only)</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-500 mb-1">IURAN BULANAN WAJIB</label>
-                      <input type="text" placeholder="e.g. Rp 50.000 / Bulan" className="w-full p-2 text-xs border rounded-lg bg-white" value={inputWajib} onChange={(e) => setInputWajib(e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-500 mb-1">TOKTOK RIPE GOTILON (PESTA PANEN)</label>
-                      <input type="text" placeholder="e.g. Rp 250.000 / KK" className="w-full p-2 text-xs border rounded-lg bg-white" value={inputGotilon} onChange={(e) => setInputGotilon(e.target.value)} />
-                    </div>
+                <form onSubmit={handleUpdateIuran} className="p-4 bg-amber-50/70 border border-amber-200 rounded-xl space-y-3 text-xs">
+                  <h3 className="font-black text-amber-950 uppercase border-b pb-1">✍️ Editor Keuangan Sekretariat</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" placeholder="Iuran Bulanan" className="p-2 border rounded-lg bg-white" value={inputWajib} onChange={(e) => setInputWajib(e.target.value)} />
+                    <input type="text" placeholder="Toktok Ripe Gotilon" className="p-2 border rounded-lg bg-white" value={inputGotilon} onChange={(e) => setInputGotilon(e.target.value)} />
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-500 mb-1">TOKTOK RIPE PEMBANGUNAN</label>
-                      <input type="text" placeholder="e.g. Rp 300.000 / KK" className="w-full p-2 text-xs border rounded-lg bg-white" value={inputPembangunan} onChange={(e) => setInputPembangunan(e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-500 mb-1">INFORMASI REKENING DONASI</label>
-                      <input type="text" placeholder="e.g. Rek Mandiri: xxxx" className="w-full p-2 text-xs border rounded-lg bg-white" value={inputDonasi} onChange={(e) => setInputDonasi(e.target.value)} />
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" placeholder="Toktok Ripe Pembangunan" className="p-2 border rounded-lg bg-white" value={inputPembangunan} onChange={(e) => setInputPembangunan(e.target.value)} />
+                    <input type="text" placeholder="Info Rekening" className="p-2 border rounded-lg bg-white" value={inputDonasi} onChange={(e) => setInputDonasi(e.target.value)} />
                   </div>
-                  <button type="submit" className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-sm">
-                    Simpan & Perbarui Ketetapan
-                  </button>
+                  <button type="submit" className="bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs">Simpan Perubahan</button>
                 </form>
               )}
 
-              {/* GRID KARTU TAMPILAN JEMAAT */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Kewajiban Rutin</span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-2">Iuran Bulanan Wajib</h4>
-                  <p className="text-xl font-black text-gray-900 mt-2">{iuranWajib}</p>
-                </div>
-
-                <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Kewajiban Tahunan</span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-2">Toktok Ripe Gotilon</h4>
-                  <p className="text-xl font-black text-gray-900 mt-2">{toktokGotilon}</p>
-                </div>
-
-                <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-purple-600 bg-purple-50 px-2 py-0.5 rounded">Dana Taktis</span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-2">Toktok Ripe Pembangunan</h4>
-                  <p className="text-xl font-black text-gray-900 mt-2">{toktokPembangunan}</p>
-                </div>
-
-                <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Sukarela / Persembahan</span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-2">Donasi & Sumbangan Tangan Lain</h4>
-                  <p className="text-xs font-medium text-gray-600 mt-2 leading-relaxed whitespace-pre-line">{infoDonasi}</p>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-xl border bg-gray-50/50"><span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Rutin</span><h4 className="font-bold text-gray-800 text-xs mt-1">Iuran Bulanan Wajib</h4><p className="text-base font-black text-gray-900 mt-1">{iuranWajib}</p></div>
+                <div className="p-3.5 rounded-xl border bg-gray-50/50"><span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Tahunan</span><h4 className="font-bold text-gray-800 text-xs mt-1">Toktok Ripe Gotilon</h4><p className="text-base font-black text-gray-900 mt-1">{toktokGotilon}</p></div>
+                <div className="p-3.5 rounded-xl border bg-gray-50/50"><span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">Dana Taktis</span><h4 className="font-bold text-gray-800 text-xs mt-1">Toktok Ripe Pembangunan</h4><p className="text-base font-black text-gray-900 mt-1">{toktokPembangunan}</p></div>
+                <div className="p-3.5 rounded-xl border bg-gray-50/50"><span className="text-[9px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Persembahan</span><h4 className="font-bold text-gray-800 text-xs mt-1">Donasi & Sumbangan</h4><p className="text-[11px] font-medium text-gray-600 mt-1 whitespace-pre-line">{infoDonasi}</p></div>
               </div>
             </div>
           )}
 
           {/* SUB-MENU: KEGIATAN */}
           {menuAktif === 'Kegiatan' && (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <button onClick={() => { setMenuAktif('Home'); setKegiatanTerpilih(null); }} className="text-sm text-blue-600 font-semibold mb-4 block">← Kembali ke Beranda</button>
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <button onClick={() => { setMenuAktif('Home'); setKegiatanTerpilih(null); }} className="text-xs text-blue-600 font-semibold mb-3 block">← Kembali ke Beranda</button>
               {!kegiatanTerpilih ? (
                 <>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">📅 Kalender & Jadwal Kegiatan</h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">📅 Kalender Jadwal Kegiatan</h2>
                   {isAdmin && (
-                    <form onSubmit={handleTambahKegiatan} className="mb-8 p-5 bg-blue-50 rounded-xl space-y-4 border border-blue-100">
-                      <input type="text" required placeholder="Nama Kegiatan" className="w-full p-2 border rounded-lg text-sm bg-white" value={inputKegNama} onChange={(e) => setInputKegNama(e.target.value)} />
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input type="text" required placeholder="Tanggal" className="p-2 border rounded-lg text-sm bg-white" value={inputKegTanggal} onChange={(e) => setInputKegTanggal(e.target.value)} />
-                        <input type="text" required placeholder="Jam" className="p-2 border rounded-lg text-sm bg-white" value={inputKegJam} onChange={(e) => setInputKegJam(e.target.value)} />
+                    <form onSubmit={handleTambahKegiatan} className="mb-5 p-4 bg-blue-50 rounded-xl space-y-3 text-xs">
+                      <input type="text" required placeholder="Nama Kegiatan" className="w-full p-2 border rounded-lg" value={inputKegNama} onChange={(e) => setInputKegNama(e.target.value)} />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" required placeholder="Tanggal" className="p-2 border rounded-lg" value={inputKegTanggal} onChange={(e) => setInputKegTanggal(e.target.value)} />
+                        <input type="text" required placeholder="Jam" className="p-2 border rounded-lg" value={inputKegJam} onChange={(e) => setInputKegJam(e.target.value)} />
                       </div>
-                      <button type="submit" className="bg-blue-600 text-white px-5 py-2 rounded-lg text-xs font-bold">Terbitkan Jadwal</button>
+                      <button type="submit" className="bg-blue-600 text-white font-bold px-3 py-1.5 rounded-md">Terbitkan Jadwal</button>
                     </form>
                   )}
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {listKegiatan.map((keg) => (
-                      <div key={keg.id} onClick={() => { setKegiatanTerpilih(keg); if(!sudahDibaca.includes(keg.id)){ setSudahDibaca([...sudahDibaca, keg.id]); } }} className="p-4 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100 hover:border-blue-400 cursor-pointer transition">
-                        <div><h4 className="font-bold text-gray-800">{keg.nama}</h4><p className="text-xs text-gray-500 mt-1">🗓️ {keg.tanggal} | ⏰ {keg.jam}</p></div>
-                        <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Buka Details ➔</span>
+                      <div key={keg.id} onClick={() => { setKegiatanTerpilih(keg); if(!sudahDibaca.includes(keg.id)){ setSudahDibaca([...sudahDibaca, keg.id]); } }} className="p-3 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100 hover:border-blue-400 cursor-pointer transition text-xs">
+                        <div><h4 className="font-bold text-gray-800">{keg.nama}</h4><p className="text-[10px] text-gray-500 mt-0.5">🗓️ {keg.tanggal} | ⏰ {keg.jam}</p></div>
+                        <span className="text-[10px] bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-bold">Buka ➔</span>
                       </div>
                     ))}
                   </div>
                 </>
               ) : (
-                <div className="bg-white p-2 rounded-xl space-y-6">
-                  <button onClick={() => setKegiatanTerpilih(null)} className="text-sm text-blue-600 font-semibold mb-2 block">← Kembali ke Jadwal</button>
-                  <h3 className="text-2xl font-bold text-gray-900 border-b pb-3">{kegiatanTerpilih.nama}</h3>
-                  <div className="bg-blue-50 p-5 rounded-xl border border-blue-100"><p className="text-gray-700 text-sm whitespace-pre-line">{kegiatanTerpilih.deskripsi}</p></div>
+                <div className="space-y-4 text-xs">
+                  <button onClick={() => setKegiatanTerpilih(null)} className="text-blue-600 font-semibold mb-1 block">← Kembali ke Jadwal</button>
+                  <h3 className="text-lg font-bold text-gray-900 border-b pb-2">{kegiatanTerpilih.nama}</h3>
+                  <div className="bg-blue-50 p-4 rounded-xl border border-blue-100"><p className="text-gray-700 whitespace-pre-line leading-relaxed">{kegiatanTerpilih.deskripsi}</p></div>
                 </div>
               )}
             </div>
@@ -457,31 +427,31 @@ export default function Home() {
 
           {/* SUB-MENU: WARTA */}
           {menuAktif === 'Warta' && (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <button onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); }} className="text-sm text-green-600 font-semibold mb-4 block">← Kembali ke Beranda</button>
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <button onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); }} className="text-xs text-green-600 font-semibold mb-3 block">← Kembali ke Beranda</button>
               {!wartaTerpilih ? (
                 <>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">📖 Berita & Warta Jemaat Resmi</h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">📖 Berita & Warta Jemaat</h2>
                   {isAdmin && (
-                    <form onSubmit={handleTambahWarta} className="mb-8 p-6 bg-green-50 rounded-xl space-y-4 border border-green-100">
-                      <input type="text" required placeholder="Warta Jemaat - Minggu 21 Juni 2026" className="w-full p-2 border rounded-lg text-sm bg-white" value={inputWartaJudul} onChange={(e) => setInputWartaJudul(e.target.value)} />
-                      <textarea rows={3} placeholder="Tingting Na Marragam..." className="w-full p-2 border rounded-lg text-sm bg-white" value={inputTingting} onChange={(e) => setInputTingting(e.target.value)} />
-                      <button type="submit" className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold">Terbitkan Warta</button>
+                    <form onSubmit={handleTambahWarta} className="mb-5 p-4 bg-green-50 rounded-xl space-y-3 text-xs">
+                      <input type="text" required placeholder="Judul Warta" className="w-full p-2 border rounded-lg" value={inputWartaJudul} onChange={(e) => setInputWartaJudul(e.target.value)} />
+                      <textarea rows={3} placeholder="Tingting Na Marragam..." className="w-full p-2 border rounded-lg" value={inputTingting} onChange={(e) => setInputTingting(e.target.value)} />
+                      <button type="submit" className="bg-green-600 text-white font-bold px-3 py-1.5 rounded-md">Terbitkan Warta</button>
                     </form>
                   )}
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {listWarta.map((warta) => (
-                      <div key={warta.id} onClick={() => { setWartaTerpilih(warta); if(!sudahDibaca.includes(warta.id)){ setSudahDibaca([...sudahDibaca, warta.id]); } }} className="p-4 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100 hover:border-green-400 cursor-pointer transition">
-                        <p className="font-semibold text-gray-800">{warta.judul}</p><span className="text-xl text-gray-400">➔</span>
+                      <div key={warta.id} onClick={() => { setWartaTerpilih(warta); if(!sudahDibaca.includes(warta.id)){ setSudahDibaca([...sudahDibaca, warta.id]); } }} className="p-3 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100 hover:border-green-400 cursor-pointer transition text-xs">
+                        <p className="font-semibold text-gray-800">{warta.judul}</p><span className="text-gray-400">➔</span>
                       </div>
                     ))}
                   </div>
                 </>
               ) : (
-                <div className="bg-white p-2 rounded-xl space-y-6">
-                  <button onClick={() => setWartaTerpilih(null)} className="text-sm text-green-600 font-semibold mb-2 block">← Kembali ke Daftar</button>
-                  <h3 className="text-2xl font-bold text-gray-900 border-b pb-3">{wartaTerpilih.judul}</h3>
-                  <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm"><p className="text-gray-700 text-sm whitespace-pre-line">{wartaTerpilih.tingtingMarragam}</p></div>
+                <div className="space-y-4 text-xs">
+                  <button onClick={() => setWartaTerpilih(null)} className="text-green-600 font-semibold mb-1 block">← Kembali ke Daftar</button>
+                  <h3 className="text-lg font-bold text-gray-900 border-b pb-2">{wartaTerpilih.judul}</h3>
+                  <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><p className="text-gray-700 whitespace-pre-line leading-relaxed">{wartaTerpilih.tingtingMarragam}</p></div>
                 </div>
               )}
             </div>
@@ -489,39 +459,42 @@ export default function Home() {
 
           {/* SUB-MENU: FORMULIR */}
           {menuAktif === 'Formulir' && (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <button onClick={() => setMenuAktif('Home')} className="text-sm text-blue-600 font-semibold mb-4 block">← Kembali ke Beranda</button>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">📝 Pengajuan Berkas & Formulir</h2>
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <button onClick={() => setMenuAktif('Home')} className="text-xs text-blue-600 font-semibold mb-3 block">← Kembali ke Beranda</button>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">📝 Pengajuan Berkas & Formulir</h2>
+              <p className="text-xs text-gray-400">Menu pengajuan berkas jemaat sedang disiapkan oleh sekretariat.</p>
             </div>
           )}
 
         </div>
 
-        {/* ==================== SIDEBAR KANAN ==================== */}
+        {/* ==================== SIDEBAR KANAN (DI MOBILE OTOMATIS TURUN KE BAWAH) ==================== */}
         <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 sticky top-24">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center"><span className="w-1.5 h-6 bg-amber-500 rounded-full mr-2"></span> Pengumuman Terbaru</h2>
-              <span className="text-xl animate-bounce">🔔</span>
+          <div className="bg-white p-5 rounded-2xl shadow-md border border-gray-100 lg:sticky lg:top-24">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-base sm:text-lg font-bold text-gray-800 flex items-center">
+                <span className="w-1.5 h-5 bg-amber-500 rounded-full mr-2"></span> Berita Terbaru
+              </h2>
+              <span className="text-lg animate-bounce">🔔</span>
             </div>
             
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-[350px] overflow-y-auto pr-0.5">
               {sidebarPengumuman.map((item: any) => {
                 const belumKlik = !sudahDibaca.includes(item.id);
                 return (
                   <div 
                     key={`${item.tipe}-${item.id}`} 
                     onClick={() => handleKlikPengumuman(item)}
-                    className={`p-4 rounded-xl border cursor-pointer transition duration-300 relative overflow-hidden transform hover:-translate-y-0.5 ${
-                      belumKlik ? 'bg-amber-50 border-amber-400 shadow-md ring-2 ring-amber-300/40' : 'bg-gray-50 border-gray-100 opacity-80' 
+                    className={`p-3.5 rounded-xl border cursor-pointer transition transform hover:-translate-y-0.5 text-xs ${
+                      belumKlik ? 'bg-amber-50 border-amber-400 shadow-sm ring-2 ring-amber-300/20' : 'bg-gray-50 border-gray-100 opacity-85' 
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider ${item.tipe === 'WARTA' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{item.tipe}</span>
-                      {belumKlik ? <span className="text-[9px] bg-red-500 text-white font-black px-1.5 py-0.5 rounded animate-pulse">🔴 BARU</span> : <span className="text-[9px] text-gray-400 font-medium">✓ Dibaca</span>}
+                      <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded tracking-wider ${item.tipe === 'WARTA' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{item.tipe}</span>
+                      {belumKlik ? <span className="text-[8px] bg-red-500 text-white font-black px-1.5 py-0.5 rounded animate-pulse">🔴 BARU</span> : <span className="text-[8px] text-gray-400 font-medium">✓ Dibaca</span>}
                     </div>
-                    <p className={`text-sm mt-2 leading-snug ${belumKlik ? 'font-black text-amber-950' : 'font-medium text-gray-600'}`}>{item.teks}</p>
-                    <span className="text-xs text-gray-400 block mt-2">⏱️ {item.info}</span>
+                    <p className={`text-xs mt-1.5 leading-snug ${belumKlik ? 'font-black text-amber-950' : 'font-medium text-gray-600'}`}>{item.teks}</p>
+                    <span className="text-[10px] text-gray-400 block mt-1.5">⏱️ {item.info}</span>
                   </div>
                 );
               })}
