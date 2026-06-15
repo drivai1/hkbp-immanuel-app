@@ -14,14 +14,14 @@ export default function Home() {
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authNama, setAuthNama] = useState('');
-  const [listPendaftar, setListPendaftar] = useState<any[]>([]); // Untuk tracking database jemaat di memory state
+  const [listPendaftar, setListPendaftar] = useState<any[]>([]); 
 
   // 1. STATE DATA KEGIATAN
   const [listKegiatan, setListKegiatan] = useState([
     { 
       id: 1, nama: 'Ibadah Minggu Rogate', tanggal: '21 Juni 2026', jam: '09:00 WIB',
       lokasi: 'Gereja Utama (Sopo)', penanggungJawab: 'Dewan Koinonia / Amang Pendeta',
-      deskripsi: 'Ibadah umum minggu Rogate dilayani oleh Amang Pendeta Sitorus.'
+      description: 'Ibadah umum minggu Rogate dilayani oleh Amang Pendeta Sitorus.'
     },
   ]);
 
@@ -97,7 +97,6 @@ export default function Home() {
     refreshSidebar();
   }, []);
 
-  // FUNGSI REGISTRASI JEMAAT BARU (STATUS BERSTATUS PENDING)
   const handleRegistrasi = (e: React.FormEvent) => {
     e.preventDefault();
     const userLokal = localStorage.getItem('hkbp_database_jemaat');
@@ -109,7 +108,6 @@ export default function Home() {
       return;
     }
 
-    // DISINI KUNCI NYA: Kita beri property status: 'PENDING'
     const userBaru = { 
       id: Date.now(), 
       nama: authNama, 
@@ -122,12 +120,11 @@ export default function Home() {
     localStorage.setItem('hkbp_database_jemaat', JSON.stringify(databaseJemaat));
     setListPendaftar(databaseJemaat);
 
-    alert('Pendaftaran Berhasil! Status Akun Anda saat ini: PENDING. Silakan hubungi Admin Sekretariat untuk disetujui (Approve) agar bisa login.');
+    alert('Pendaftaran Berhasil! Menunggu Approval Admin.');
     setIsRegistrasi(false);
     setAuthEmail(''); setAuthPassword(''); setAuthNama('');
   };
 
-  // FUNGSI LOGIN DENGAN VALIDASI CEK APPROVAL STATUS
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -138,7 +135,7 @@ export default function Home() {
       localStorage.setItem('hkbp_session_user', 'Admin Sekretariat');
       localStorage.setItem('hkbp_session_role', 'admin');
       setTampilkanAuth(false);
-      alert('Selamat Datang Kembali, Amang/Ina Admin!');
+      alert('Selamat Datang Kembali, Admin!');
       return;
     }
 
@@ -148,9 +145,8 @@ export default function Home() {
     const cocok = databaseJemaat.find((u: any) => u.email === authEmail && u.password === authPassword);
 
     if (cocok) {
-      // CEK STATUS APPROVAL
       if (cocok.status === 'PENDING') {
-        alert('❌ Login Ditolak! Akun jemaat Anda belum disetujui oleh Admin Sekretariat. Mohon tunggu atau konfirmasi ke sintua/sekretaris jemaat.');
+        alert('❌ Login Ditolak! Akun jemaat Anda belum disetujui oleh Admin Sekretariat.');
         return;
       }
 
@@ -166,21 +162,18 @@ export default function Home() {
     }
   };
 
-  // FUNGSI UNTUK ADMIN MENYETUJUI (APPROVE) AKUN JEMAAT
   const handleApproveJemaat = (id: number) => {
     const userLokal = localStorage.getItem('hkbp_database_jemaat');
     let databaseJemaat = userLokal ? JSON.parse(userLokal) : [];
 
     databaseJemaat = databaseJemaat.map((u: any) => {
-      if (u.id === id) {
-        return { ...u, status: 'APPROVED' }; // Ubah status menjadi APPROVED
-      }
+      if (u.id === id) { return { ...u, status: 'APPROVED' }; }
       return u;
     });
 
     localStorage.setItem('hkbp_database_jemaat', JSON.stringify(databaseJemaat));
     setListPendaftar(databaseJemaat);
-    alert('Akun jemaat Berhasil disetujui! Sekarang jemaat tersebut sudah bisa login.');
+    alert('Akun jemaat Berhasil disetujui!');
   };
 
   const handleLogout = () => {
@@ -234,7 +227,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="cursor-pointer" onClick={() => { setMenuAktif('Home'); setWartaTerpilih(null); setKegiatanTerpilih(null); }}>
             <h1 className="text-2xl font-bold tracking-wide">HKBP Immanuel Metro Permata</h1>
-            <p className="text-xs text-blue-100">Selamat Datang, <span className="font-bold underline">{namaUser}</span></p>
+            <p className="text-xs text-blue-100">Horas! Selamat Datang di Sistem Informasi Jemaat</p>
           </div>
           
           <div className="flex items-center space-x-6">
@@ -284,15 +277,31 @@ export default function Home() {
         
         {/* KOLOM UTAMA (KIRI-TENGAH) */}
         <div className="lg:col-span-2 space-y-8">
+          
           {menuAktif === 'Home' && (
             <>
-              <div className="w-full h-64 bg-sky-200 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center text-sky-800 font-semibold text-lg border border-sky-300">
-                [ Foto HKBP Immanuel Metro Permata ]
+              {/* ==================== BANNER SELAMAT DATANG DENGAN NAMA USER LENGKAP ==================== */}
+              <div className="bg-gradient-to-r from-blue-700 to-indigo-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+                <div className="relative z-10">
+                  <span className="text-xs font-bold uppercase bg-blue-500/40 px-3 py-1 rounded-full tracking-wider">
+                    {isLoggedIn ? (isAdmin ? '👑 Ruang Kerja Sekretariat' : '⛪ Laman Warga Jemaat') : '👋 Selamat Datang'}
+                  </span>
+                  <h2 className="text-2xl md:text-3xl font-extrabold mt-3 tracking-wide">
+                    Horas, {namaUser}!
+                  </h2>
+                  <p className="text-xs text-blue-100 mt-2 max-w-md leading-relaxed">
+                    {isLoggedIn 
+                      ? 'Anda berhasil masuk ke sistem pelayanan digital HKBP Immanuel Metro Permata. Silakan akses menu warta dan kegiatan gereja di bawah ini.' 
+                      : 'Silakan masuk atau daftar akun jemaat terlebih dahulu untuk mengakses seluruh laporan kegiatan dan warta jemaat resmi secara lengkap.'}
+                  </p>
+                </div>
+                {/* Ornamen Estetik Latar Belakang */}
+                <div className="absolute -right-10 -bottom-10 text-9xl opacity-10 select-none pointer-events-none">⛪</div>
               </div>
 
-              {/* ==================== FITUR EXCLUSIVE: PANEL APPROVAL DI DASHBOARD ADMIN ==================== */}
+              {/* PANEL APPROVAL ADMIN */}
               {isAdmin && (
-                <div className="bg-red-50 p-6 rounded-2xl border border-red-200 shadow-sm animate-fade-in">
+                <div className="bg-red-50 p-6 rounded-2xl border border-red-200 shadow-sm">
                   <h2 className="text-lg font-bold text-red-900 mb-4 flex items-center">
                     <span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-ping"></span>
                     🔒 Pangkalan Data Approval Akun Jemaat Baru
@@ -321,24 +330,25 @@ export default function Home() {
                 </div>
               )}
 
+              {/* LAYANAN GEREJA */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                   <span className="w-1.5 h-6 bg-blue-600 rounded-full mr-2"></span> Layanan Gereja
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                  <div onClick={() => { setMenuAktif('Kegiatan'); setKegiatanTerpilih(null); }} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-blue-50">
+                  <div onClick={() => { setMenuAktif('Kegiatan'); setKegiatanTerpilih(null); }} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-blue-50 transition">
                     <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">📅</div>
                     <span className="text-sm text-gray-700 mt-3 font-semibold">Kegiatan</span>
                   </div>
-                  <div onClick={() => { setMenuAktif('Warta'); setWartaTerpilih(null); }} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-green-50">
+                  <div onClick={() => { setMenuAktif('Warta'); setWartaTerpilih(null); }} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-green-50 transition">
                     <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-2xl">📖</div>
                     <span className="text-sm text-gray-700 mt-3 font-semibold">Warta</span>
                   </div>
-                  <div onClick={() => setMenuAktif('Formulir')} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-purple-50">
+                  <div onClick={() => setMenuAktif('Formulir')} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-purple-50 transition">
                     <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">📝</div>
                     <span className="text-sm text-gray-700 mt-3 font-semibold">Formulir</span>
                   </div>
-                  <div onClick={() => alert('Fitur GSG siap digunakan')} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-amber-50">
+                  <div onClick={() => alert('Fitur GSG siap digunakan')} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-amber-50 transition">
                     <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center text-2xl">🏠</div>
                     <span className="text-sm text-gray-700 mt-3 font-semibold">Gedung GSG</span>
                   </div>
